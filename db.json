@@ -1,0 +1,69 @@
+{
+  "users": [
+    {
+      "uid": "admin-nashwan",
+      "email": "nashwann1991@gmail.com",
+      "password": "$2b$10$O2RPxU3koMO8xWkTHbPASOnkKZWvVkyRgzyPc/.fvjOeIZ27gTXgC",
+      "displayName": "Nashwan Admin",
+      "role": "admin",
+      "createdAt": 1774040671557
+    },
+    {
+      "uid": "doc-1",
+      "email": "doctor1@hospital.com",
+      "password": "$2b$10$O2RPxU3koMO8xWkTHbPASOnkKZWvVkyRgzyPc/.fvjOeIZ27gTXgC",
+      "displayName": "د. أحمد علي",
+      "role": "doctor",
+      "specialization": "طب الأسرة",
+      "employeeId": "EMP-001",
+      "createdAt": 1774040671557
+    },
+    {
+      "uid": "doc-2",
+      "email": "doctor2@hospital.com",
+      "password": "$2b$10$O2RPxU3koMO8xWkTHbPASOnkKZWvVkyRgzyPc/.fvjOeIZ27gTXgC",
+      "displayName": "د. سارة محمد",
+      "role": "doctor",
+      "specialization": "الباطنية",
+      "employeeId": "EMP-002",
+      "createdAt": 1774040671557
+    }
+  ],
+  "patients": [
+    {
+      "id": "1023456789",
+      "name": "محمد خالد العتيبي",
+      "createdAt": 1774040671557
+    },
+    {
+      "id": "1098765432",
+      "name": "فاطمة الزهراني",
+      "createdAt": 1774040671557
+    }
+  ],
+  "sick_leaves": [
+    {
+      "id": "REF-A1B2C3",
+      "patientName": "محمد خالد العتيبي",
+      "patientNameEn": "Mohammed Khalid Al-Otaibi",
+      "patientId": "1023456789",
+      "doctorId": "doc-1",
+      "doctorName": "د. أحمد علي",
+      "doctorNameEn": "Dr. Ahmed Ali",
+      "diagnosis": "التهاب الحلق الحاد",
+      "diagnosisEn": "Acute Pharyngitis",
+      "startDate": "2026-03-15",
+      "endDate": "2026-03-17",
+      "duration": 2,
+      "nationality": "سعودي",
+      "nationalityEn": "Saudi",
+      "employer": "شركة أرامكو",
+      "employerEn": "Aramco",
+      "doctorPosition": "استشاري",
+      "doctorPositionEn": "Consultant",
+      "createdAt": 1774040671557,
+      "qrCodeData": "https://ais-dev-r32nfm6p6s7chq2nk7dnvp-15734251039.europe-west1.run.app/verify/REF-A1B2C3",
+      "status": "active"
+    }
+  ]
+}

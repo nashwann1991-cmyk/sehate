@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Application user (doctor or admin)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "password": { "type": "string", "description": "Hashed password" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "doctor"] },
+        "specialization": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["uid", "email", "role", "password"]
+    },
+    "Patient": {
+      "title": "Patient",
+      "description": "Patient record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameEn": { "type": "string" },
+        "nationality": { "type": "string" },
+        "nationalityEn": { "type": "string" },
+        "employer": { "type": "string" },
+        "employerEn": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "dateOfBirth": { "type": "string" },
+        "gender": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "name"]
+    },
+    "SickLeave": {
+      "title": "SickLeave",
+      "description": "Medical sick leave certificate",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "patientName": { "type": "string" },
+        "patientNameEn": { "type": "string" },
+        "patientId": { "type": "string" },
+        "doctorId": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "doctorNameEn": { "type": "string" },
+        "diagnosis": { "type": "string" },
+        "diagnosisEn": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "duration": { "type": "number" },
+        "nationality": { "type": "string" },
+        "nationalityEn": { "type": "string" },
+        "employer": { "type": "string" },
+        "employerEn": { "type": "string" },
+        "doctorPosition": { "type": "string" },
+        "doctorPositionEn": { "type": "string" },
+        "admissionDate": { "type": "string" },
+        "dischargeDate": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "qrCodeData": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "expired", "cancelled"] }
+      },
+      "required": ["id", "patientId", "doctorId", "startDate", "endDate", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/patients/{id}": {
+      "schema": "Patient",
+      "description": "Patient records"
+    },
+    "/sick_leaves/{id}": {
+      "schema": "SickLeave",
+      "description": "Sick leave certificates"
+    }
+  }
+}
