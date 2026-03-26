@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: uid
+    // Fields:
+    //   - uid: string (required)
+    //   - email: string (required, email format)
+    //   - displayName: string (required)
+    //   - role: string (required, enum: ['admin', 'doctor'])
+    //   - status: string (required, enum: ['pending', 'active', 'suspended'])
+    //   - specialization: string (optional)
+    //   - employeeId: string (optional)
+    //   - createdAt: number (required)
+    //   - subscription: map (optional)
+    //
+    // Collection: patients
+    // Document ID: nationalId
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required)
+    //   - email: string (optional, email format)
+    //   - phone: string (optional)
+    //   - dateOfBirth: string (optional)
+    //   - gender: string (optional, enum: ['male', 'female'])
+    //   - createdAt: number (required)
+    //
+    // Collection: sick_leaves
+    // Document ID: auto-generated
+    // Fields:
+    //   - id: string (required)
+    //   - patientName: string (required)
+    //   - patientId: string (required)
+    //   - doctorId: string (required)
+    //   - startDate: string (required)
+    //   - endDate: string (required)
+    //   - status: string (required, enum: ['active', 'expired', 'cancelled'])
+    //   - createdAt: number (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    function isDoctor() {
+      return isAuthenticated() && 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor');
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'status', 'createdAt']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.role in ['admin', 'doctor'] &&
+             data.status in ['pending', 'active', 'suspended'] &&
+             data.createdAt is number;
+    }
+
+    function isValidPatient(data) {
+      return data.keys().hasAll(['id', 'name', 'createdAt']) &&
+             data.id is string &&
+             data.name is string &&
+             data.createdAt is number;
+    }
+
+    function isValidSickLeave(data) {
+      return data.keys().hasAll(['id', 'patientId', 'doctorId', 'startDate', 'endDate', 'status', 'createdAt', 'leaveNumber', 'patientName', 'doctorName', 'diagnosis']) &&
+             data.id is string &&
+             data.patientId is string &&
+             data.doctorId is string &&
+             data.startDate is string &&
+             data.endDate is string &&
+             data.status in ['active', 'expired', 'cancelled'] &&
+             data.createdAt is number &&
+             data.leaveNumber is string &&
+             data.patientName is string &&
+             data.doctorName is string &&
+             data.diagnosis is string;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow get: if isAuthenticated();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && (request.resource.data.status == 'pending' || isAdmin());
+      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == resource.data.role && request.resource.data.status == resource.data.status) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /patients/{patientId} {
+      allow get, list: if isAuthenticated();
+      allow create, update: if (isAdmin() || isDoctor()) && isValidPatient(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /sick_leaves/{leaveId} {
+      allow read: if true;
+      allow create: if (isAdmin() || isDoctor()) && isValidSickLeave(request.resource.data) && request.resource.data.doctorId == request.auth.uid;
+      allow update: if (isAdmin() || (isDoctor() && resource.data.doctorId == request.auth.uid)) && isValidSickLeave(request.resource.data);
+      allow delete: if isAdmin();
+    }
+  }
+}

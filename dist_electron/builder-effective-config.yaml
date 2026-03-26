@@ -1,0 +1,17 @@
+directories:
+  output: dist_electron
+  buildResources: build
+appId: com.sehatee.app
+productName: نظام إجازتي المرضية
+files:
+  - filter:
+      - dist/**/*
+      - main.cjs
+      - package.json
+win:
+  target: portable
+mac:
+  target: dmg
+linux:
+  target: AppImage
+electronVersion: 41.0.3
